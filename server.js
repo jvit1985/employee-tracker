@@ -1,4 +1,5 @@
 const inquirer = require("inquirer");
+const express = require('express');
 const mysql = require('mysql2');
 const cTable = require('console.table');
 const PORT = process.env.PORT || 3001;
@@ -16,6 +17,7 @@ connection.connect(err => {
     console.log('Database connected.');
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
+        mainMenu();
     });
 });
 
@@ -25,7 +27,7 @@ function mainMenu () {
             type: 'list',
             message: 'What would you like to do?',
             name: 'selection',
-            selections: [
+            choices: [
                 'View All Departments',
                 'View All Roles',
                 'View All Employees',
@@ -37,7 +39,7 @@ function mainMenu () {
             ]
         }
     ]).then(function(answer) {
-        switch (answer.selection) {
+        switch (answer.choice) {
             case 'View All Departments':
                 viewAllDepartments();
                 break;
@@ -67,3 +69,45 @@ function mainMenu () {
     });
 };
 
+function viewAllDepartments() {
+    connection.query(`SELECT * FROM department;`, 
+    function(err, res) {
+        if (err) throw (err)
+        console.table(res);
+        mainMenu();
+    });
+};
+
+function viewAllRoles() {
+    connection.query(`SELECT * FROM role, department.name AS name FROM department LEFT JOIN department ON role.department_id = department.id;`,
+    function(err, res) {
+        if (err) throw (err)
+        console.table(res);
+        mainMenu();
+    });
+};
+
+function viewAllEmployees() {
+    connection.query(`SELECT * FROM employee, role.title, role.salary FROM role JOIN role on employee.role_id = role.id, department.name FROM department JOIN department ON roles.department_id = department.id, CONCAT(e.first_name, " " ,e.last_name) AS manager FROM employee LEFT JOIN employee e on employee.manager_id = e.id;`,
+    function(err, res) {
+        if (err) throw (err)
+        console.table(res);
+        mainMenu();
+    });
+};
+
+// function addDepartment() {
+    
+// };
+
+// function addRole() {
+
+// };
+
+// function addEmployee() {
+
+// };
+
+// function updateEmployee() {
+
+// };
