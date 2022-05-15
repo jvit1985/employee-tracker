@@ -235,6 +235,56 @@ function addEmployee() {
     });
 };
 
-// function updateEmployee() {
+function updateEmployee() {
+    const employeeSql = `SELECT * FROM employee`;
 
-// };
+    connection.query(employeeSql, (err, data) => {
+        if (err) throw (err);
+        const employees = data.map(({ id, first_name, last_name }) => ({ name: first_name + " "+ last_name, value: id }));
+
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'empName',
+                message: 'Which employee would you like to update?',
+                choices: employees
+            }
+        ])
+        .then(empChoice => {
+            const employee = empChoice.empName;
+            const params = [];
+            params.push(employee);
+
+            const roleSql = `SELECT * FROM role`;
+
+            connection.query(roleSql, (err, data) => {
+                if (err) throw (err);
+                const roles = data.map(({ id, title }) => ({ name: title, value: id }));
+                inquirer.prompt([
+                    {
+                        type: 'list',
+                        name: 'empRole',
+                        message: "What is the employee's new role?",
+                        choices: roles
+                    }
+                ])
+                .then(roleChoice => {
+                    const empRole = roleChoice.empRole;
+                    params.push(empRole);
+
+                    let employee = params[0]
+                    params[0] = empRole
+                    params[1] = employee
+
+                    const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
+
+                    connection.query(sql, params, (err, res) => {
+                        if (err) throw (err);
+                        console.log('Employee has been updated.');
+                        viewAllEmployees();
+                    });
+                });
+            });
+        });
+    });
+};
