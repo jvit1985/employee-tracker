@@ -121,9 +121,52 @@ function addDepartment() {
     });
 };
 
-// function addRole() {
+function addRole() {
+    inquirer.prompt ([
+        {
+            type: 'input',
+            name: 'title',
+            message: 'What is the title of the role?'
+        },
+        {
+            type: 'input',
+            name: 'salary',
+            message: 'What is the salary for this role?'
+        }
+    ])
+    .then(answers => {
+       const params = [answers.title, answers.salary];
 
-// };
+       const getDept = `SELECT name, id FROM department`;
+
+       connection.query(getDept, (err, data) => {
+           if (err) throw (err);
+           const depart = data.map(({ name, id }) => ({ name: name, value: id }));
+
+           inquirer.prompt([
+               {
+                   type: 'list',
+                   name: 'depart',
+                   message: 'Which department is this role under?',
+                   choices: depart
+               }
+           ])
+           .then(departmentChoice => {
+               const depart = departmentChoice.depart;
+               params.push(depart);
+
+               const sql = `INSERT INTO role (title, salary, department_id)
+                            VALUES (?,?,?)`;
+
+                connection.query(sql, params, (err, res) => {
+                    if (err) throw (err);
+                    console.log('Added ' + answers.title + " to roles.");
+                    viewAllRoles();
+                });
+           });
+       });
+    });
+};
 
 // function addEmployee() {
 
