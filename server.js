@@ -76,7 +76,7 @@ viewAllDepartments = () => {
 };
 
 viewAllRoles = () => {
-    const sql = `SELECT role.id, role.title, department.name AS Department
+    const sql = `SELECT role.id AS Id, role.title AS Title, department.name AS Department
     FROM role
     INNER JOIN department ON role.department_id = department.id`;
 
@@ -87,13 +87,39 @@ viewAllRoles = () => {
     });
 };
 
-// function viewAllEmployees() {
-
-// };
-
-// function addDepartment() {
+function viewAllEmployees() {
+    const sql = `SELECT employee.id AS ID, employee.first_name AS FirstName, employee.last_name AS LastName, role.title AS Title, department.name AS Department, role.salary AS Salary, CONCAT (manager.first_name, " ", manager.last_name) AS Manager
+    FROM employee
+        LEFT JOIN role on employee.role_id = role.id
+        LEFT JOIN department ON role.department_id = department.id
+        LEFT JOIN employee manager ON employee.manager_id = manager.id`;
     
-// };
+    connection.query(sql, (err, rows) => {
+        if (err) throw (err);
+        console.table(rows);
+        mainMenu();
+    });
+};
+
+function addDepartment() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'dept',
+            message: 'What is the name of the department you want to add?'
+        }
+    ])
+    .then(answer => {
+        const sql = `INSERT INTO department (name)
+                    VALUES (?)`;
+        
+        connection.query(sql, answer.dept, (err, res) => {
+            if (err) throw (err);
+            console.log("Added " + answer.dept + " to departments table.");
+            viewAllDepartments();
+        });
+    });
+};
 
 // function addRole() {
 

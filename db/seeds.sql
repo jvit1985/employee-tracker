@@ -21,8 +21,8 @@ VALUES
     ("John", "Doe", 1, null),
     ("James", "Moore", 2, 1),
     ("Brian", "Jones", 3, null),
-    ("Sarah", "Combs", 4, 2),
+    ("Sarah", "Combs", 4, 3),
     ("Kevin", "Johnson", 5, null),
-    ("Lisa", "Williams", 6, 3),
+    ("Lisa", "Williams", 6, 5),
     ("Kimberly", "Wexler", 7, null),
-    ("Howard", "Jefferson", 8, 4);
+    ("Howard", "Jefferson", 8, 7);
