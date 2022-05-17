@@ -1,8 +1,9 @@
+//Package installs
 const inquirer = require("inquirer");
 const mysql = require('mysql2');
 const cTable = require('console.table');
 
-
+//Connection to mysql
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -16,6 +17,7 @@ connection.connect(err => {
         mainMenu();
 });
 
+//Main menu list
 const mainMenu = () => {
     inquirer.prompt([
         {
@@ -65,6 +67,7 @@ const mainMenu = () => {
     });
 };
 
+//View all departments method
 viewAllDepartments = () => {
     const sql = `SELECT department.id AS Id, department.name AS Department FROM department`;
 
@@ -75,6 +78,7 @@ viewAllDepartments = () => {
     });
 };
 
+//View All Roles Method
 viewAllRoles = () => {
     const sql = `SELECT role.id AS Id, role.title AS Title, department.name AS Department
     FROM role
@@ -87,6 +91,7 @@ viewAllRoles = () => {
     });
 };
 
+//View All Employees Method
 function viewAllEmployees() {
     const sql = `SELECT employee.id AS ID, employee.first_name AS FirstName, employee.last_name AS LastName, role.title AS Title, department.name AS Department, role.salary AS Salary, CONCAT (manager.first_name, " ", manager.last_name) AS Manager
     FROM employee
@@ -101,6 +106,7 @@ function viewAllEmployees() {
     });
 };
 
+//Add a department method
 function addDepartment() {
     inquirer.prompt([
         {
@@ -121,6 +127,7 @@ function addDepartment() {
     });
 };
 
+//Add a Role method
 function addRole() {
     inquirer.prompt ([
         {
@@ -135,6 +142,7 @@ function addRole() {
         }
     ])
     .then(answers => {
+        //Get list of departments
        const params = [answers.title, answers.salary];
 
        const getDept = `SELECT name, id FROM department`;
@@ -152,6 +160,7 @@ function addRole() {
                }
            ])
            .then(departmentChoice => {
+               //Add new department
                const depart = departmentChoice.depart;
                params.push(depart);
 
@@ -168,6 +177,7 @@ function addRole() {
     });
 };
 
+//Add employee method
 function addEmployee() {
         inquirer.prompt ([
             {
@@ -182,6 +192,7 @@ function addEmployee() {
             }
         ])
         .then(answers => {
+            //get list of roles
            const params = [answers.firstName, answers.lastName];
     
            const getRole = `SELECT role.id, role.title FROM role`;
@@ -199,6 +210,7 @@ function addEmployee() {
                    }
                ])
                .then(roleChoice => {
+                   //get list of managers
                    const role = roleChoice.role;
                    params.push(role);
     
@@ -217,6 +229,7 @@ function addEmployee() {
                             }
                         ])
                         .then(managerChoice => {
+                            //Add employee
                             const manager = managerChoice.manager;
                             params.push(manager);
 
@@ -235,7 +248,9 @@ function addEmployee() {
     });
 };
 
+//Update employee role method
 function updateEmployee() {
+    //Get list of employees
     const employeeSql = `SELECT * FROM employee`;
 
     connection.query(employeeSql, (err, data) => {
@@ -251,6 +266,7 @@ function updateEmployee() {
             }
         ])
         .then(empChoice => {
+            //Get list of roles
             const employee = empChoice.empName;
             const params = [];
             params.push(employee);
@@ -269,6 +285,7 @@ function updateEmployee() {
                     }
                 ])
                 .then(roleChoice => {
+                    //Update employee role
                     const empRole = roleChoice.empRole;
                     params.push(empRole);
 
