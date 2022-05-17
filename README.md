@@ -25,7 +25,10 @@
   ## Usage
   Here are the instructions and examples of how to use this project:
   After installing type npm start and cycle through the menu options based on what you would like to do, then select quit when finished.
-
+  
+  Here is a link showing the app being used:
+  
+  https://drive.google.com/file/d/11ybyDvuAKE5kHJdt0raqn5J2s9UyQ5_v/view
 
   
   ## License
